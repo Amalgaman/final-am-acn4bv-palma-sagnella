@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primaryB">#66489C</color>
+    <color name="taskB">#4B415C</color>
+    <color name="transBlue">#703C6686</color>
 </resources>
