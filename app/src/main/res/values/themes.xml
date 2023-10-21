@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.CreciMonstruo" parent="Base.Theme.CreciMonstruo" />
+    <style name="Theme.Popup" parent="Base.Theme.CreciMonstruo">
+      <item name="android:windowIsFloating">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 </resources>
