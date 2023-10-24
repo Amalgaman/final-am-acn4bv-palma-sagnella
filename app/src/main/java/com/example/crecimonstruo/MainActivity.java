@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Monster mA;
 
     private LinkedList<Task> tasks;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState ) {
@@ -54,6 +57,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void actualizarMonster(){
+        tvNombre.setText(mA.getNombre());
+        tvNivel.setText("Nivel: "+mA.getNivel());
+        tvExp.setText("Exp: "+mA.getExp()+"/"+5*mA.getNivel());
+    }
+
+    public void actualizarLista(){
+        LinearLayout layout = (LinearLayout)findViewById(R.id.listaLayout);
+        Button nuevo;
+
+        int imgTilde = R.drawable.ic_complete;
+
+        for (Task task : tasks) {
+
+            nuevo = new Button(this);
+
+            nuevo.setText(task.getTitulo());
+            nuevo.setId(task.getId());
+
+            if (task.isLista()){
+                nuevo.setCompoundDrawablesWithIntrinsicBounds(0, 0, imgTilde, 0);
+                nuevo.setCompoundDrawablePadding(0);
+            }
+
+
+
+            layout.addView(nuevo);
+        }
         tvNombre.setText(mA.getNombre());
         tvNivel.setText("Nivel: "+mA.getNivel());
         tvExp.setText("Exp: "+mA.getExp()+"/"+5*mA.getNivel());

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="BotonTaskAtr">
+        <item name="specialButtonStyle">@style/BotonTask</item>
+    </style>
+    <style name="BotonTask" parent="@android:style/Widget.Button">
+        <item name="android:layout_width"> match_parent </item>
+        <item name="android:layout_height"> match_parent </item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:backgroundTint">@color/taskB</item>
+        <item name="android:shadowRadius">3</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="drawableSize">24dp</item>
+        <item name="android:drawableTint">#6AF565</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>
