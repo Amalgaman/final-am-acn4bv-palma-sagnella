@@ -146,7 +146,6 @@
                 android:shadowRadius="3"
                 android:text="Realizar Abdominales"
                 app:cornerRadius="10dp"
-                app:icon="@drawable/ic_complete"
                 app:iconGravity="end"
                 app:iconPadding="0dp"
                 app:iconSize="24dp"
