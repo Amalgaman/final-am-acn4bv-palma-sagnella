@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">CreciMonstruo</string>
+    <string name="nombre_mounstro">Nombre de Monstruo</string>
+    <string name="boton_editar">Editar</string>
+    <string name="boton_anadir">Añadir</string>
+    <string name="boton_calendario">Calendario</string>
+    <string name="boton_coleccion">Coleccion</string>
+
+    <string name="crear_nueva_tarea">Crear nueva Tarea</string>
+    <string name="ingresar_titulo">Ingresar Titulo</string>
+    <string name="dificultad">Dificultad</string>
+    <string name="facil1">Facil (1)</string>
+    <string name="intermedio2">Intermedia (2)</string>
+    <string name="dificil3">Dificil(3)</string>
+
 </resources>

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Crear nueva Tarea"
+        android:text="@string/crear_nueva_tarea"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/editTitulo"
@@ -27,7 +27,7 @@
         android:layout_marginEnd="32dp"
         android:background="@color/white"
         android:ems="10"
-        android:hint="Ingresar Titulo"
+        android:hint="@string/ingresar_titulo"
         android:inputType="text"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Dificultad"
+        android:text="@string/dificultad"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/editTitulo"
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="@color/white"
-            android:text="Facil (1)"
+            android:text="@string/facil1"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
             android:buttonTint="@color/white"
-            android:text="Intermedia (2)"
+            android:text="@string/intermedio2"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
             android:buttonTint="@color/white"
-            android:text="Dificil(3)"
+            android:text="@string/dificil3"
             android:textColor="@color/white"
             android:textSize="16sp" />
     </RadioGroup>

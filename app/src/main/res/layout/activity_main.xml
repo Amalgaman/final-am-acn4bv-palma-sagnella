@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:shadowColor="#77000000"
-        android:text="Nombre de Monstruo"
+        android:text="@string/nombre_mounstro"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         android:backgroundTint="@color/primaryB"
-        android:text="Editar"
+        android:text="@string/boton_editar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/primaryB"
-        android:text="Añadir"
+        android:text="@string/boton_anadir"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toStartOf="@+id/button6"
         app:layout_constraintStart_toEndOf="@+id/button5" />
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:backgroundTint="@color/primaryB"
-        android:text="Calendario"
+        android:text="@string/boton_calendario"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -109,7 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/primaryB"
-        android:text="Coleccion"
+        android:text="@string/boton_coleccion"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent" />
 

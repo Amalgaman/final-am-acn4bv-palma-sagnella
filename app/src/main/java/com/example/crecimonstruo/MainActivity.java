@@ -48,12 +48,7 @@ public class MainActivity extends AppCompatActivity {
         tasks.add(new Task("Almorzar Sano", "Preparar ensalada de verduras para el almuerzo", 2, new Date()));
         tasks.add(new Task("Trotar 1 Hora", "Trotar durante 1 hora en la plaza", 2, new Date()));
         tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
+
 
 
 
