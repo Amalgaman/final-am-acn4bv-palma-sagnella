@@ -68,12 +68,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:src="@drawable/plataforma1"
-        app:layout_constraintBottom_toBottomOf="@+id/button4"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonAnadir"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageMonster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="85dp"
@@ -84,7 +84,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/buttonAnadir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/primaryB"
