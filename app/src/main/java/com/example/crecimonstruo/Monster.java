@@ -6,6 +6,7 @@ public class Monster {
 
     private String nombre;
     private int exp;
+
     private int nivel;
     private String[] img;
 
@@ -46,5 +47,19 @@ public class Monster {
 
     public void setImg(String[] img) {
         this.img = img;
+    }
+
+    public void subirNivel(int exp){
+        this.exp += exp;
+
+        if(this.exp < 5){
+            this.nivel = 1;
+        }else if(this.exp <10){
+            this.nivel = 2;
+        }else if(this.exp <15){
+            this.nivel = 3;
+        }else {
+            this.nivel = 4;
+        }
     }
 }

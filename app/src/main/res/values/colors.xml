@@ -5,5 +5,6 @@
     <color name="primaryB">#66489C</color>
     <color name="taskB">#4B415C</color>
     <color name="transBlue">#703C6686</color>
+    <color name="fondoDialog">#355C7C</color>
     <color name="confirm">#279132</color>
 </resources>
