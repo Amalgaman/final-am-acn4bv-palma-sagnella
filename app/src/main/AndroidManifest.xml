@@ -13,9 +13,12 @@
         android:theme="@style/Theme.CreciMonstruo"
         tools:targetApi="31">
         <activity
+            android:name=".MainActivity2"
+            android:exported="false" />
+        <activity
             android:name=".EditarNombre"
             android:exported="false"
-            android:theme="@style/Theme.Popup"/>
+            android:theme="@style/Theme.Popup" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
