@@ -1,15 +1,11 @@
 package com.example.crecimonstruo;
 
-import static com.example.crecimonstruo.R.color.taskB;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +17,6 @@ import android.widget.TextView;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
         tasks.add(new Task("Almorzar Sano", "Preparar ensalada de verduras para el almuerzo", 2, new Date()));
         tasks.add(new Task("Trotar 1 Hora", "Trotar durante 1 hora en la plaza", 2, new Date()));
         tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
-
-
-
 
         tvNombre = (TextView)findViewById(R.id.tvNombre);
         tvNivel = (TextView)findViewById(R.id.tvNivel);
@@ -88,16 +80,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int lvl = mA.getNivel()-1;//Para traer la imagen por id
-        imgMonster.setImageResource(getResources().getIdentifier(mA.getImg()[lvl], "drawable",getPackageName()));
+        imgMonster.setImageResource(getResources().getIdentifier(mA.getEvos()[lvl], "drawable",getPackageName()));
     }
 
     public void actualizarLista(){
 
         LinearLayout layout = (LinearLayout)findViewById(R.id.listaLayout);
 
-
         layout.removeAllViews();
-
 
         Button nuevo;
 

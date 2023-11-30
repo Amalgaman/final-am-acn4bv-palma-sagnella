@@ -1,20 +1,17 @@
 package com.example.crecimonstruo;
 
-import java.util.LinkedList;
-
 public class Monster {
 
     private String nombre;
     private int exp;
-
     private int nivel;
-    private String[] img;
+    private String[] evos;
 
-    public Monster(String nombre, String[] img) {
+    public Monster(String nombre, String[] evos) {
         this.nombre = nombre;
         this.exp = 0;
         this.nivel = 1;
-        this.img = img;
+        this.evos = evos;
     }
 
     public String getNombre() {
@@ -41,12 +38,12 @@ public class Monster {
         this.nivel = nivel;
     }
 
-    public String[] getImg() {
-        return img;
+    public String[] getEvos() {
+        return evos;
     }
 
-    public void setImg(String[] img) {
-        this.img = img;
+    public void setEvos(String[] evos) {
+        this.evos = evos;
     }
 
     public void subirNivel(int exp){
