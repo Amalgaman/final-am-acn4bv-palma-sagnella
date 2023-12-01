@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -49,7 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgMonster;
     private String email;
     private Monster mA;
-    private LinkedList<Task> tasks = new LinkedList<Task>();;
+    private LinkedList<Task> tasks = new LinkedList<Task>();
+
+    private ProgressBar progressBar;
+    private View overlay;
 
 
     @Override
@@ -58,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseFirestore db =FirebaseFirestore.getInstance();
+        progressBar = findViewById(R.id.progressBar);
+        overlay = findViewById(R.id.overlay);
 
         //setup
         Bundle bundle = getIntent().getExtras();
@@ -66,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setup(FirebaseFirestore db){
+
+        //Se muestra la carga
+        progressBar.setVisibility(View.VISIBLE);
+        overlay.setVisibility(View.VISIBLE);
 
         tvNombre = (TextView)findViewById(R.id.tvNombre);
         tvNivel = (TextView)findViewById(R.id.tvNivel);
@@ -136,10 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 // El documento no existe
-
             }
+            progressBar.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
         }).addOnFailureListener(e -> {
             // Manejar el caso de error si la operación no es exitosa
+            progressBar.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
             e.printStackTrace();
         });
 
@@ -147,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void actualizarMonster() {
+        //Se muestra la carga
+        progressBar.setVisibility(View.VISIBLE);
+        overlay.setVisibility(View.VISIBLE);
         tvNombre.setText(mA.getNombre());
         tvNivel.setText("Nivel: " + mA.getNivel());
         if (mA.getNivel() < 4) {
@@ -206,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
                         imgMonster.setLayoutParams(params);
                     }
                 });
+        progressBar.setVisibility(View.GONE);
+        overlay.setVisibility(View.GONE);
 
     }
 
