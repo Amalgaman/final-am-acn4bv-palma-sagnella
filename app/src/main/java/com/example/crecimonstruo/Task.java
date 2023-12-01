@@ -9,11 +9,11 @@ public class Task {
     private String descripcion;
     private int dificultad;
     private boolean lista;
-    private Date dia;
+
     //Truco para fingir un AutoIncremental
     private static int ai=1;
 
-    public Task(String titulo, String descripcion, int dificultad, Date dia) {
+    public Task(String titulo, String descripcion, int dificultad) {
         //"AutoIncremental"
         this.id = ai;
         ai++;
@@ -22,7 +22,19 @@ public class Task {
         this.descripcion = descripcion;
         this.dificultad = dificultad;
         this.lista = false;
-        this.dia = dia;
+
+    }
+
+    public Task(String titulo, int dificultad, boolean lista) {
+        //"AutoIncremental"
+        this.id = ai;
+        ai++;
+
+        this.titulo = titulo;
+        this.descripcion = "";
+        this.dificultad = dificultad;
+        this.lista = lista;
+
     }
 
     public int getId() {
@@ -65,11 +77,4 @@ public class Task {
         this.lista = lista;
     }
 
-    public Date getDia() {
-        return dia;
-    }
-
-    public void setDia(Date dia) {
-        this.dia = dia;
-    }
 }

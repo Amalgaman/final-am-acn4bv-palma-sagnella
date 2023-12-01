@@ -1,16 +1,25 @@
 package com.example.crecimonstruo;
 
+import java.util.List;
+
 public class Monster {
 
     private String nombre;
     private int exp;
     private int nivel;
-    private String[] evos;
+    private List<String> evos;
 
-    public Monster(String nombre, String[] evos) {
+    public Monster(String nombre, List<String> evos) {
         this.nombre = nombre;
         this.exp = 0;
         this.nivel = 1;
+        this.evos = evos;
+    }
+
+    public Monster(String nombre, int exp, int nivel, List<String> evos) {
+        this.nombre = nombre;
+        this.exp = exp;
+        this.nivel = nivel;
         this.evos = evos;
     }
 
@@ -38,11 +47,11 @@ public class Monster {
         this.nivel = nivel;
     }
 
-    public String[] getEvos() {
+    public List<String> getEvos() {
         return evos;
     }
 
-    public void setEvos(String[] evos) {
+    public void setEvos(List<String> evos) {
         this.evos = evos;
     }
 

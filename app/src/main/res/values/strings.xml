@@ -3,7 +3,7 @@
     <string name="nombre_mounstro">Nombre de Monstruo</string>
     <string name="boton_editar">Editar</string>
     <string name="boton_anadir">Añadir</string>
-    <string name="boton_calendario">Calendario</string>
+    <string name="boton_calendario">Guardar</string>
     <string name="boton_coleccion">Coleccion</string>
 
     <string name="crear_nueva_tarea">Crear nueva Tarea</string>

@@ -15,8 +15,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button bAnadir;
     private ImageView imgMonster;
     private Monster mA;
-
-    private LinkedList<Task> tasks;
+    private LinkedList<Task> tasks = new LinkedList<Task>();;
 
 
     @Override
@@ -36,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Datos Placeholder para inicializar
-        mA = new Monster("Cubsprout", new String[]{"cubsprout", "dandylion", "pawthorne", "bloomane"});
-        tasks = new LinkedList<Task>();
-        tasks.add(new Task("Lavar la ropa", "Poner la ropa en el lavarropa y colgarla", 1, new Date()));
-        tasks.add(new Task("Almorzar Sano", "Preparar ensalada de verduras para el almuerzo", 2, new Date()));
-        tasks.add(new Task("Trotar 1 Hora", "Trotar durante 1 hora en la plaza", 2, new Date()));
-        tasks.add(new Task("Terminar el TP", "Terminar el TP pendiente de Aplicaciones Moviles", 3, new Date()));
+        FirebaseFirestore db =FirebaseFirestore.getInstance();
+
+        //setup
+        Bundle bundle = getIntent().getExtras();
+        String email = bundle.getString("email");
+        setup(db, email);
+    }
+
+    public void setup(FirebaseFirestore db, String email){
 
         tvNombre = (TextView)findViewById(R.id.tvNombre);
         tvNivel = (TextView)findViewById(R.id.tvNivel);
@@ -65,8 +70,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        actualizarMonster();
-        actualizarLista();
+        db.collection("users").document(email).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // El documento existe, puedes acceder a los datos
+                Map<String, Object> userData = documentSnapshot.getData();
+
+                if (userData.containsKey("monster")) {
+                    // Accede al subdocumento "monster"
+                    Map<String, Object> monsterData = (Map<String, Object>) userData.get("monster");
+
+                    mA = new Monster(
+                            (String) monsterData.get("nombre"),
+                            (int) ((long) monsterData.get("exp")),
+                            (int) ((long) monsterData.get("lvl")),
+                            (List<String>) monsterData.get("evos")
+                    );
+
+                    actualizarMonster();
+
+                } else {
+                    // El documento no tiene un subdocumento "monster"
+                }
+
+                if (userData.containsKey("task")) {
+                    // Accede al subdocumento "task"
+                    List<Object> taskData = (List<Object>) userData.get("task");
+
+                    for (Object task : taskData) {
+                        Map<String, Object> aux = (Map<String, Object>) task;
+                        Task aux2 = new Task((String) aux.get("titulo"), ((Long) aux.get("dificultad")).intValue(), (boolean) aux.get("lista"));
+                        tasks.add(aux2);
+                    }
+
+                    actualizarLista();
+
+                } else {
+                    // El documento no tiene un subdocumento "task"
+                }
+            } else {
+                // El documento no existe
+
+            }
+        }).addOnFailureListener(e -> {
+            // Manejar el caso de error si la operación no es exitosa
+            e.printStackTrace();
+        });
+
+        //Datos Placeholder para inicializar
+
 
     }
 
@@ -80,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int lvl = mA.getNivel()-1;//Para traer la imagen por id
-        imgMonster.setImageResource(getResources().getIdentifier(mA.getEvos()[lvl], "drawable",getPackageName()));
+        //imgMonster.setImageResource(getResources().getIdentifier(mA.getEvos(), "drawable",getPackageName()));
     }
 
     public void actualizarLista(){
@@ -238,9 +289,9 @@ public class MainActivity extends AppCompatActivity {
                 // Aquí puedes obtener los valores de los campos del formulario
                 EditText editText1 = formView.findViewById(R.id.editTitulo);
                 RadioGroup radioGroup = formView.findViewById(R.id.radio_group);
-                RadioButton rb1 = formView.findViewById(R.id.radio_button1);
-                RadioButton rb2 = formView.findViewById(R.id.radio_button2);
-                RadioButton rb3 = formView.findViewById(R.id.radio_button3);
+                RadioButton rb1 = formView.findViewById(R.id.radio_select3);
+                RadioButton rb2 = formView.findViewById(R.id.radio_select2);
+                RadioButton rb3 = formView.findViewById(R.id.radio_select1);
 
                 String titulo = editText1.getText().toString();
                 int seleccion = 0;
@@ -254,7 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if(seleccion > 0 && !titulo.equals("")){
-                    tasks.add(new Task(titulo, "Poner la ropa en el lavarropa y colgarla", seleccion, new Date()));
+                    tasks.add(new Task(titulo, seleccion, false));
+
                     actualizarLista();
                 }
 
