@@ -55,6 +55,12 @@ public class LoginActivity extends AppCompatActivity {
         RadioButton rb1 = findViewById(R.id.radio_select1);
         RadioButton rb2 = findViewById(R.id.radio_select2);
         RadioButton rb3 = findViewById(R.id.radio_select3);
+        RadioButton rb4 = findViewById(R.id.radio_select4);
+        RadioButton rb5 = findViewById(R.id.radio_select5);
+        RadioButton rb6 = findViewById(R.id.radio_select6);
+        RadioButton rb7 = findViewById(R.id.radio_select7);
+        RadioButton rb8 = findViewById(R.id.radio_select8);
+        RadioButton rb9 = findViewById(R.id.radio_select9);
 
         buttonLogin = (Button)findViewById(R.id.buttonLogin);
         buttonRegistro = (Button)findViewById(R.id.buttonRegistro);
@@ -67,14 +73,32 @@ public class LoginActivity extends AppCompatActivity {
                 List<String> evos = new ArrayList<>();
 
                 if (rb1.isChecked()) {
-                    seleccion = "agumon";
-                    evos = Arrays.asList("agumon", "greymon", "metalgreymon", "wargreymon");
+                    seleccion = "Agumon";
+                    evos = Arrays.asList("Agumon", "Greymon", "Metal_Greymon", "War_Greymon");
                 } else if (rb2.isChecked()) {
-                    seleccion = "gabumon";
-                    evos = Arrays.asList("gabumon", "garurumon", "weregarurumon", "metalgarurumon");;
+                    seleccion = "Gabumon";
+                    evos = Arrays.asList("Gabumon", "Garurumon", "Were_Garurumon", "Metal_Garurumon");;
                 } else if (rb3.isChecked()) {
-                    seleccion = "patamon";
-                    evos = Arrays.asList("patamon", "angemon", "magnaangemon", "seraphimon");
+                    seleccion = "Patamon";
+                    evos = Arrays.asList("Patamon", "Angemon", "Holy_Angemon", "Seraphimon");
+                } else if (rb4.isChecked()) {
+                    seleccion = "Devimon";
+                    evos = Arrays.asList("Pico_Devimon", "Devimon", "Vamdemon", "Belial_Vamdemon");
+                } else if (rb5.isChecked()) {
+                    seleccion = "Palmon";
+                    evos = Arrays.asList("Palmon", "Togemon", "Lilimon", "Rosemon");
+                } else if (rb6.isChecked()) {
+                    seleccion = "Tentomon";
+                    evos = Arrays.asList("Tentomon", "Kabuterimon", "Atlur_Kabuterimon_(Red)", "Herakle_Kabuterimon");
+                } else if (rb7.isChecked()) {
+                    seleccion = "Piyomon";
+                    evos = Arrays.asList("Piyomon", "Birdramon", "Garudamon", "Hououmon");
+                } else if (rb8.isChecked()) {
+                    seleccion = "Gomamon";
+                    evos = Arrays.asList("Gomamon", "Ikkakumon", "Zudomon", "Vikemon");
+                } else if (rb9.isChecked()) {
+                    seleccion = "Hagurumon";
+                    evos = Arrays.asList("Hagurumon", "Guardromon", "Andromon", "Hi_Andromon");
                 } else {
                     seleccion = "";
                 }

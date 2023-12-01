@@ -1,11 +1,19 @@
 package com.example.crecimonstruo;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +23,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -130,23 +143,73 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         });
 
-        //Datos Placeholder para inicializar
-
 
     }
 
-    public void actualizarMonster(){
+    public void actualizarMonster() {
         tvNombre.setText(mA.getNombre());
-        tvNivel.setText("Nivel: "+mA.getNivel());
-        if (mA.getNivel() < 4){
-            tvExp.setText("Exp: "+mA.getExp()+"/"+5*mA.getNivel());
-        }else{
-            tvExp.setText("Exp: "+mA.getExp());
+        tvNivel.setText("Nivel: " + mA.getNivel());
+        if (mA.getNivel() < 4) {
+            tvExp.setText("Exp: " + mA.getExp() + "/" + 5 * mA.getNivel());
+        } else {
+            tvExp.setText("Exp: " + mA.getExp());
         }
 
-        int lvl = mA.getNivel()-1;//Para traer la imagen por id
-        //imgMonster.setImageResource(getResources().getIdentifier(mA.getEvos(), "drawable",getPackageName()));
+        int aux = mA.getNivel()-1;
+        String evo = mA.getEvos().get(aux);
+
+        // Cargar imagen desde la API con Glide y eliminar fondo blanco
+        String imageUrl = "https://digimon-api.com/images/digimon/w/"+ evo +".png";
+        Glide.with(this)
+                .asBitmap()
+                .load(imageUrl)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        // Eliminar fondo blanco del bitmap
+                        Bitmap noWhiteBackgroundBitmap = ImageUtils.removeWhiteBackground(resource);
+
+                        // Asignar el bitmap resultante al ImageView
+                        imgMonster.setImageBitmap(noWhiteBackgroundBitmap);
+
+                        // Manipular los márgenes en dp
+                        int leftMarginDp = 0; // Ajusta este valor en dp según sea necesario
+                        int topMarginDp = 0; // Ajusta este valor en dp según sea necesario
+                        int rightMarginDp = 0; // Ajusta este valor en dp según sea necesario
+                        int bottomMarginDp = 70; // Ajusta este valor en dp según sea necesario
+
+                        switch(mA.getNivel()){
+                            case 1:
+                                topMarginDp = 180;
+                                break;
+                            case 2:
+                                topMarginDp = 140;
+                                break;
+                            case 3:
+                                topMarginDp = 100;
+                                break;
+                            case 4:
+                                topMarginDp = 80;
+                                break;
+                        }
+
+
+                        // Convertir los márgenes de dp a píxeles
+                        int leftMarginPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, leftMarginDp, getResources().getDisplayMetrics());
+                        int topMarginPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, topMarginDp, getResources().getDisplayMetrics());
+                        int rightMarginPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, rightMarginDp, getResources().getDisplayMetrics());
+                        int bottomMarginPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, bottomMarginDp, getResources().getDisplayMetrics());
+
+                        // Aplicar márgenes al ConstraintLayout
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) imgMonster.getLayoutParams();
+                        params.setMargins(leftMarginPx, topMarginPx, rightMarginPx, bottomMarginPx);
+                        imgMonster.setLayoutParams(params);
+                    }
+                });
+
     }
+
+
 
     public void actualizarLista(){
 
