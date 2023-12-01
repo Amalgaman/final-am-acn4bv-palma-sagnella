@@ -15,9 +15,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvExp;
     private Button bEditarNombre;
     private Button bAnadir;
+    private Button bGuardar;
     private ImageView imgMonster;
+    private String email;
     private Monster mA;
     private LinkedList<Task> tasks = new LinkedList<Task>();;
 
@@ -43,17 +48,19 @@ public class MainActivity extends AppCompatActivity {
 
         //setup
         Bundle bundle = getIntent().getExtras();
-        String email = bundle.getString("email");
-        setup(db, email);
+        email = bundle.getString("email");
+        setup(db);
     }
 
-    public void setup(FirebaseFirestore db, String email){
+    public void setup(FirebaseFirestore db){
 
         tvNombre = (TextView)findViewById(R.id.tvNombre);
         tvNivel = (TextView)findViewById(R.id.tvNivel);
         tvExp = (TextView)findViewById(R.id.tvExp);
         imgMonster = (ImageView)findViewById(R.id.imageMonster);
 
+
+        //Funcionalidad de Boton "Editar"
         bEditarNombre = (Button)findViewById(R.id.b_editar_nombre);
         bEditarNombre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 showInputDialogNombre();
             }
         });
-
+        //Funcionalidad de Boton "Añadir"
         bAnadir = (Button)findViewById(R.id.buttonAnadir);
         bAnadir.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +76,14 @@ public class MainActivity extends AppCompatActivity {
                 showFormDialogAnadir();
             }
         });
+        //Funcionalidad de Boton "Guardar"
+        bGuardar = (Button)findViewById(R.id.buttonGuardar);
+        bGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { guardar(db); }
+        });
 
+        //Cargar datos de FireStore
         db.collection("users").document(email).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 // El documento existe, puedes acceder a los datos
@@ -322,6 +336,65 @@ public class MainActivity extends AppCompatActivity {
 
         // Mostrar el cuadro de diálogo del formulario
         builder.show();
+    }
+
+    private void guardar(FirebaseFirestore db){
+
+
+        Map<String, Object> userData = new HashMap<>();
+        Map<String, Object> monsterData = new HashMap<>();
+        List<Map<String, Object>> taskData = new ArrayList<>();
+
+        for (Task tarea : tasks) {
+            Map<String, Object> tareaMap = new HashMap<>();
+            tareaMap.put("titulo", tarea.getTitulo());
+            tareaMap.put("dificultad", tarea.getDificultad());
+            tareaMap.put("lista", tarea.isLista());
+            taskData.add(tareaMap);
+        }
+
+        monsterData.put("nombre", mA.getNombre());
+        monsterData.put("exp", mA.getExp());
+        monsterData.put("evos", mA.getEvos());
+        monsterData.put("lvl", mA.getNivel());
+
+        userData.put("task", taskData);
+        userData.put("monster", monsterData);
+
+        db.collection("users").document(email).update(userData)
+                .addOnCompleteListener((OnCompleteListener<Void>) task -> {
+                    if (task.isSuccessful()) {
+                        // Éxito al agregar la lista de tareas
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("Datos Guardados con Exitos")
+                                .setMessage("Se almacenaron los datos correctamente")
+                                .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // START THE GAME!
+                                    }
+                                })
+                                .show();
+                    } else {
+                        // Error al agregar la lista de tareas
+                        Exception exception = task.getException();
+                        if (exception instanceof FirebaseAuthException) {
+                        FirebaseAuthException authException = (FirebaseAuthException) exception;
+                        String errorCode = authException.getErrorCode();
+                        String errorMessage = authException.getMessage();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle(errorCode)
+                                .setMessage(errorMessage)
+                                .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // START THE GAME!
+                                    }
+                                })
+                                .show();
+                        }
+                    }
+                });
+
     }
 }
 
