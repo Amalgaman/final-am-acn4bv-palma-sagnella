@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     mostrarMain(task.getResult().getUser().getEmail());
                                 }else{
-                                    Exception exception = task.getException();
+                                    Exception exception = task.getException();//Tomar error code
                                     if (exception instanceof FirebaseAuthException) {
                                         FirebaseAuthException authException = (FirebaseAuthException) exception;
                                         String errorCode = authException.getErrorCode();
