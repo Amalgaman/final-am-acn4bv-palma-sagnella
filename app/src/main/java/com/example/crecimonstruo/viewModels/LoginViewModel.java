@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,6 +24,7 @@ public class LoginViewModel extends ViewModel {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(onCompleteListener);
     }
+
 
     public void loginUser(String email, String password, OnCompleteListener<com.google.firebase.auth.AuthResult> onCompleteListener) {
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)

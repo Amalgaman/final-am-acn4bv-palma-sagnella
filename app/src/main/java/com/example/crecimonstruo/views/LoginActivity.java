@@ -12,14 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.example.crecimonstruo.R;
 import com.example.crecimonstruo.viewModels.LoginViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -122,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         // Registro exitoso
                                         loginViewModel.saveUserData(task.getResult().getUser().getEmail(), nombreRegistro.getText().toString(), seleccion, finalEvos1);
+                                        sendEmailVerification(task.getResult().getUser());
                                         mostrarMain(task.getResult().getUser().getEmail());
                                     } else {
                                         // Mostrar error de registro
@@ -185,5 +189,23 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    // Función para enviar la verificación por correo electrónico
+    private void sendEmailVerification(FirebaseUser user) {
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // Email de verificación enviado correctamente
+                            Toast.makeText(LoginActivity.this, "Se ha enviado un correo de verificación", Toast.LENGTH_SHORT).show();
+                            // Puedes redirigir a la actividad de inicio de sesión o realizar otras acciones
+                        } else {
+                            // Error al enviar el correo de verificación
+                            Toast.makeText(LoginActivity.this, "Error al enviar el correo de verificación", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
