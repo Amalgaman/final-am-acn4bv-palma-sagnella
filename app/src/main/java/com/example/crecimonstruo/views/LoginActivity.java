@@ -164,6 +164,8 @@ public class LoginActivity extends AppCompatActivity {
                                             String errorCode = authException.getErrorCode();
                                             String errorMessage = authException.getMessage();
                                             showErrorRegistro(errorCode, errorMessage);
+                                        } else {
+                                            showErrorRegistro("No se pudo iniciar sesion", "Usuario o Contraseña incorrectos");
                                         }
                                     }
                                 }
