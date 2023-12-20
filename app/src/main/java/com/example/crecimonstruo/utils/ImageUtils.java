@@ -1,4 +1,4 @@
-package com.example.crecimonstruo;
+package com.example.crecimonstruo.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

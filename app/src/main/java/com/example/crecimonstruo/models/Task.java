@@ -1,4 +1,4 @@
-package com.example.crecimonstruo;
+package com.example.crecimonstruo.models;
 
 import java.util.Date;
 

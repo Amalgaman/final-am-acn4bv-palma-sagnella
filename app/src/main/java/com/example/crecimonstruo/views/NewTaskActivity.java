@@ -1,16 +1,18 @@
-package com.example.crecimonstruo;
+package com.example.crecimonstruo.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
-public class EditarNombre extends AppCompatActivity {
+import com.example.crecimonstruo.R;
+
+public class NewTaskActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editar_nombre);
+        setContentView(R.layout.activity_new_task);
 
         DisplayMetrics medidas = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(medidas);

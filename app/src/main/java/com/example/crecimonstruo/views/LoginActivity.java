@@ -1,7 +1,9 @@
-package com.example.crecimonstruo;
+package com.example.crecimonstruo.views;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,9 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
+import com.example.crecimonstruo.R;
+import com.example.crecimonstruo.viewModels.LoginViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,10 +38,15 @@ public class LoginActivity extends AppCompatActivity {
     private Button buttonLogin;
     private Button buttonRegistro;
 
+    private LoginViewModel loginViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Inicializar el ViewModel
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
         //Inicio
         inicio();
@@ -67,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
         buttonRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 String seleccion;
                 List<String> evos = new ArrayList<>();
@@ -105,33 +114,24 @@ public class LoginActivity extends AppCompatActivity {
 
                 if( !seleccion.equals("") && !emailRegistro.getText().equals("") && !passwordRegistro.getText().equals("") && !nombreRegistro.getText().equals("")){
 
-                    List<String> finalEvos = evos;
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailRegistro.getText().toString(), passwordRegistro.getText().toString())
-                            .addOnCompleteListener((OnCompleteListener<com.google.firebase.auth.AuthResult>) task -> {
-                                if (task.isSuccessful()) {
-
-                                    Map<String, Object> userData = new HashMap<>();
-                                    Map<String, Object> monsterData = new HashMap<>();
-
-                                    monsterData.put("nombre", seleccion);
-                                    monsterData.put("exp", 0);
-                                    monsterData.put("lvl", 1);
-                                    monsterData.put("evos", finalEvos);
-                                    userData.put("nombre", nombreRegistro.getText().toString());
-                                    userData.put("monster", monsterData);
-
-                                    db.collection("users").document(task.getResult().getUser().getEmail()).set(userData);
-
-                                    mostrarMain(task.getResult().getUser().getEmail());
-                                }else{
-                                    Exception exception = task.getException();//Tomar error code
-                                    if (exception instanceof FirebaseAuthException) {
-                                        FirebaseAuthException authException = (FirebaseAuthException) exception;
-                                        String errorCode = authException.getErrorCode();
-                                        String errorMessage = authException.getMessage();
-
-                                        showErrorRegistro(errorCode, errorMessage);
-
+                    List<String> finalEvos1 = evos;
+                    loginViewModel.registerUser(emailRegistro.getText().toString(), passwordRegistro.getText().toString(), nombreRegistro.getText().toString(), seleccion, evos,
+                            new OnCompleteListener<com.google.firebase.auth.AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Registro exitoso
+                                        loginViewModel.saveUserData(task.getResult().getUser().getEmail(), nombreRegistro.getText().toString(), seleccion, finalEvos1);
+                                        mostrarMain(task.getResult().getUser().getEmail());
+                                    } else {
+                                        // Mostrar error de registro
+                                        Exception exception = task.getException();
+                                        if (exception instanceof FirebaseAuthException) {
+                                            FirebaseAuthException authException = (FirebaseAuthException) exception;
+                                            String errorCode = authException.getErrorCode();
+                                            String errorMessage = authException.getMessage();
+                                            showErrorRegistro(errorCode, errorMessage);
+                                        }
                                     }
                                 }
                             });
@@ -145,19 +145,22 @@ public class LoginActivity extends AppCompatActivity {
 
                 if( !emailLogin.getText().equals("") && !passwordLogin.getText().equals("")){
 
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLogin.getText().toString(), passwordLogin.getText().toString())
-                            .addOnCompleteListener((OnCompleteListener<com.google.firebase.auth.AuthResult>) task -> {
-                                if (task.isSuccessful()) {
-                                    mostrarMain(task.getResult().getUser().getEmail());
-                                }else{
-                                    Exception exception = task.getException();
-                                    if (exception instanceof FirebaseAuthException) {
-                                        FirebaseAuthException authException = (FirebaseAuthException) exception;
-                                        String errorCode = authException.getErrorCode();
-                                        String errorMessage = authException.getMessage();
-
+                    loginViewModel.loginUser(emailLogin.getText().toString(), passwordLogin.getText().toString(),
+                            new OnCompleteListener<com.google.firebase.auth.AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<com.google.firebase.auth.AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Inicio de sesión exitoso
+                                        mostrarMain(task.getResult().getUser().getEmail());
+                                    } else {
+                                        // Mostrar error de inicio de sesión
+                                        Exception exception = task.getException();
+                                        if (exception instanceof FirebaseAuthException) {
+                                            FirebaseAuthException authException = (FirebaseAuthException) exception;
+                                            String errorCode = authException.getErrorCode();
+                                            String errorMessage = authException.getMessage();
                                             showErrorRegistro(errorCode, errorMessage);
-
+                                        }
                                     }
                                 }
                             });
@@ -168,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void mostrarMain(String email){
-        Intent intent = new Intent(this, MainActivity.class).putExtra("email", email);
+        Intent intent = new Intent(this, HomeActivity.class).putExtra("email", email);
         startActivity(intent);
     }
 
