@@ -1,4 +1,4 @@
-package com.example.crecimonstruo;
+package com.example.crecimonstruo.views;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -6,12 +6,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,10 +23,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.crecimonstruo.R;
+import com.example.crecimonstruo.models.Monster;
+import com.example.crecimonstruo.models.Task;
+import com.example.crecimonstruo.utils.ImageUtils;
+import com.example.crecimonstruo.viewModels.HomeViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     private TextView tvNombre;
     private TextView tvNivel;
@@ -49,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private Button bGuardar;
     private ImageView imgMonster;
     private String email;
-    private Monster mA;
-    private LinkedList<Task> tasks = new LinkedList<Task>();
-
+    private HomeViewModel viewModel;
     private ProgressBar progressBar;
     private View overlay;
 
@@ -59,19 +58,71 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
-        FirebaseFirestore db =FirebaseFirestore.getInstance();
+        // Inicializar ViewModel
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         progressBar = findViewById(R.id.progressBar);
         overlay = findViewById(R.id.overlay);
 
-        //setup
+        // Obtener el correo electrónico del intent
         Bundle bundle = getIntent().getExtras();
-        email = bundle.getString("email");
-        setup(db);
+        if (bundle != null) {
+            email = bundle.getString("email");
+        }
+
+        setup();
+
+        // Configurar observadores para actualizar la interfaz de usuario cuando los datos cambian
+        viewModel.getMonsterLiveData().observe(this, monster -> {
+            if (monster != null) {
+                actualizarMonster(monster);
+            }
+        });
+
+        viewModel.getTasksLiveData().observe(this, tasks -> {
+            if (tasks != null) {
+                actualizarLista(tasks);
+            }
+        });
+
+        viewModel.getResultadoGuardadoLiveData().observe(this, resultado -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            switch(resultado){
+                case "OK":
+                    // Éxito al agregar la lista de tareas
+                    builder.setTitle("Datos Guardados con Exitos")
+                            .setMessage("Se almacenaron los datos correctamente")
+                            .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // START THE GAME!
+                                }
+                            })
+                            .show();
+                    break;
+                default:
+                    builder.setTitle(resultado)
+                            .setMessage("Ocurrio un error inesperado, intentelo mas tarde")
+                            .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // START THE GAME!
+                                }
+                            })
+                            .show();
+                    break;
+            }
+        });
+
+        // Cargar datos iniciales
+        viewModel.loadData(email);
     }
 
-    public void setup(FirebaseFirestore db){
+    public void setup(){
 
         //Se muestra la carga
         progressBar.setVisibility(View.VISIBLE);
@@ -103,76 +154,25 @@ public class MainActivity extends AppCompatActivity {
         bGuardar = (Button)findViewById(R.id.buttonGuardar);
         bGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { guardar(db); }
+            public void onClick(View view) { guardar(); }
         });
-
-        //Cargar datos de FireStore
-        db.collection("users").document(email).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                // El documento existe, puedes acceder a los datos
-                Map<String, Object> userData = documentSnapshot.getData();
-
-                if (userData.containsKey("monster")) {
-                    // Accede al subdocumento "monster"
-                    Map<String, Object> monsterData = (Map<String, Object>) userData.get("monster");
-
-                    mA = new Monster(
-                            (String) monsterData.get("nombre"),
-                            (int) ((long) monsterData.get("exp")),
-                            (int) ((long) monsterData.get("lvl")),
-                            (List<String>) monsterData.get("evos")
-                    );
-
-                    actualizarMonster();
-
-                } else {
-                    // El documento no tiene un subdocumento "monster"
-                }
-
-                if (userData.containsKey("task")) {
-                    // Accede al subdocumento "task"
-                    List<Object> taskData = (List<Object>) userData.get("task");
-
-                    for (Object task : taskData) {
-                        Map<String, Object> aux = (Map<String, Object>) task;
-                        Task aux2 = new Task((String) aux.get("titulo"), ((Long) aux.get("dificultad")).intValue(), (boolean) aux.get("lista"));
-                        tasks.add(aux2);
-                    }
-
-                    actualizarLista();
-
-                } else {
-                    // El documento no tiene un subdocumento "task"
-                }
-            } else {
-                // El documento no existe
-            }
-            progressBar.setVisibility(View.GONE);
-            overlay.setVisibility(View.GONE);
-        }).addOnFailureListener(e -> {
-            // Manejar el caso de error si la operación no es exitosa
-            progressBar.setVisibility(View.GONE);
-            overlay.setVisibility(View.GONE);
-            e.printStackTrace();
-        });
-
 
     }
 
-    public void actualizarMonster() {
+    public void actualizarMonster(Monster monster) {
         //Se muestra la carga
         progressBar.setVisibility(View.VISIBLE);
         overlay.setVisibility(View.VISIBLE);
-        tvNombre.setText(mA.getNombre());
-        tvNivel.setText("Nivel: " + mA.getNivel());
-        if (mA.getNivel() < 4) {
-            tvExp.setText("Exp: " + mA.getExp() + "/" + 5 * mA.getNivel());
+        tvNombre.setText(monster.getNombre());
+        tvNivel.setText("Nivel: " + monster.getNivel());
+        if (monster.getNivel() < 4) {
+            tvExp.setText("Exp: " + monster.getExp() + "/" + 5 * monster.getNivel());
         } else {
-            tvExp.setText("Exp: " + mA.getExp());
+            tvExp.setText("Exp: " + monster.getExp());
         }
 
-        int aux = mA.getNivel()-1;
-        String evo = mA.getEvos().get(aux);
+        int aux = monster.getNivel()-1;
+        String evo = monster.getEvos().get(aux);
 
         // Cargar imagen desde la API con Glide y eliminar fondo blanco
         String imageUrl = "https://digimon-api.com/images/digimon/w/"+ evo +".png";
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                         int rightMarginDp = 0; // Ajusta este valor en dp según sea necesario
                         int bottomMarginDp = 70; // Ajusta este valor en dp según sea necesario
 
-                        switch(mA.getNivel()){
+                        switch(monster.getNivel()){
                             case 1:
                                 topMarginDp = 180;
                                 break;
@@ -227,9 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-    public void actualizarLista(){
+    public void actualizarLista(List<Task> tasks){
 
         LinearLayout layout = (LinearLayout)findViewById(R.id.listaLayout);
 
@@ -302,15 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void completarTarea(int id){
-        Task task = tasks.get(id-1);
-        task.setLista(true);
-        mA.subirNivel(task.getDificultad());
-
-        actualizarMonster();
-        actualizarLista();
-    }
-
     private void showConfirmDialogTarea(String titulo, int idTask) { //Crea un mensaje de confirmacion emergente
 
         AlertDialog.Builder builder;
@@ -319,8 +308,7 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("¿Marcar esta tarea como completada?")
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
-                        completarTarea(idTask);
+                        viewModel.completarTarea(idTask);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -351,11 +339,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String userInput = input.getText().toString();
-                if(!userInput.equals("")){
-                    mA.setNombre(userInput);
-                    actualizarMonster();
-                }
-
+                viewModel.handleInputNombre(userInput);
             }
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -374,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Inflar el diseño del formulario dentro del cuadro de diálogo
-        View formView = getLayoutInflater().inflate(R.layout.activity_editar_nombre, null);
+        View formView = getLayoutInflater().inflate(R.layout.activity_new_task, null);
         builder.setView(formView);
 
         // Configurar los botones de aceptar y cancelar
@@ -399,11 +383,7 @@ public class MainActivity extends AppCompatActivity {
                     seleccion = 3;
                 }
 
-                if(seleccion > 0 && !titulo.equals("")){
-                    tasks.add(new Task(titulo, seleccion, false));
-
-                    actualizarLista();
-                }
+                viewModel.addNewTask(titulo, seleccion);
 
             }
         });
@@ -419,63 +399,8 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void guardar(FirebaseFirestore db){
-
-
-        Map<String, Object> userData = new HashMap<>();
-        Map<String, Object> monsterData = new HashMap<>();
-        List<Map<String, Object>> taskData = new ArrayList<>();
-
-        for (Task tarea : tasks) {
-            Map<String, Object> tareaMap = new HashMap<>();
-            tareaMap.put("titulo", tarea.getTitulo());
-            tareaMap.put("dificultad", tarea.getDificultad());
-            tareaMap.put("lista", tarea.isLista());
-            taskData.add(tareaMap);
-        }
-
-        monsterData.put("nombre", mA.getNombre());
-        monsterData.put("exp", mA.getExp());
-        monsterData.put("evos", mA.getEvos());
-        monsterData.put("lvl", mA.getNivel());
-
-        userData.put("task", taskData);
-        userData.put("monster", monsterData);
-
-        db.collection("users").document(email).update(userData)
-                .addOnCompleteListener((OnCompleteListener<Void>) task -> {
-                    if (task.isSuccessful()) {
-                        // Éxito al agregar la lista de tareas
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle("Datos Guardados con Exitos")
-                                .setMessage("Se almacenaron los datos correctamente")
-                                .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        // START THE GAME!
-                                    }
-                                })
-                                .show();
-                    } else {
-                        // Error al agregar la lista de tareas
-                        Exception exception = task.getException();
-                        if (exception instanceof FirebaseAuthException) {
-                        FirebaseAuthException authException = (FirebaseAuthException) exception;
-                        String errorCode = authException.getErrorCode();
-                        String errorMessage = authException.getMessage();
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle(errorCode)
-                                .setMessage(errorMessage)
-                                .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        // START THE GAME!
-                                    }
-                                })
-                                .show();
-                        }
-                    }
-                });
-
+    private void guardar(){
+        viewModel.guardarData();
     }
 }
 
